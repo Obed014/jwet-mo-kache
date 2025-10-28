@@ -1,4 +1,4 @@
-                <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ht">
 <head>
     <meta charset="UTF-8">
@@ -48,6 +48,78 @@
             max-width: 500px;
             margin: 50px auto;
             text-align: center;
+        }
+
+        .login-screen h1 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 2em;
+        }
+
+        .slideshow-container {
+            position: relative;
+            width: 100%;
+            max-width: 500px;
+            height: 300px;
+            margin: 0 auto 20px;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .slide {
+            display: none;
+            width: 100%;
+            height: 100%;
+        }
+
+        .slide.active {
+            display: block;
+            animation: fadeIn 1s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .slideshow-dots {
+            text-align: center;
+            margin-top: -30px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .dot {
+            height: 12px;
+            width: 12px;
+            margin: 0 5px;
+            background-color: rgba(255,255,255,0.5);
+            border-radius: 50%;
+            display: inline-block;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .dot.active {
+            background-color: white;
+            transform: scale(1.2);
+        }
+
+        .hero-image {
+            width: 100%;
+            max-width: 500px;
+            height: 250px;
+            border-radius: 15px;
+            object-fit: cover;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
         }
 
         .login-screen h2 {
@@ -631,10 +703,39 @@
     <div class="container">
         <!-- Écran de connexion -->
         <div id="loginScreen" class="login-screen">
-            <h1> Jwèt Mo Kache</h1>
+            <h1>🔍 Jwèt Mo Kache</h1>
             <p class="subtitle">Kreyòl Ayisyen</p>
+            
+            <div style="background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%); padding: 20px; border-radius: 15px; margin-bottom: 20px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
+                <p style="font-size: 1.3em; font-weight: bold; color: #d32f2f; margin: 0;">
+                    🎉 Bon selebrasyon lang ak kilti kreyòl! 🇭🇹
+                </p>
+            </div>
+
+            <!-- Diaporama -->
+            <div class="slideshow-container">
+                <div class="slide active">
+                    <img src="https://images.unsplash.com/photo-1548013146-72479768bada?q=80&w=1000" alt="Vue de Port-au-Prince">
+                </div>
+                <div class="slide">
+                    <img src="https://plus.unsplash.com/premium_photo-1732834277034-9e2eb5dd4d60?q=80&w=1000" alt="Culture Haïtienne">
+                </div>
+                <div class="slide">
+                    <img src="https://images.unsplash.com/photo-1622989637210-6260164c8311?q=80&w=1000" alt="Art Haïtien">
+                </div>
+                <div class="slide">
+                    <img src="https://media.istockphoto.com/id/518044323/photo/caribbean-cuisine.jpg?s=1024x1024&w=is&k=20&c=hUY5HmB1Tg8oKBKYtJUjtzzwFt2i8TX-Qwshs5RpsPs=" alt="Cuisine Créole">
+                </div>
+            </div>
+            <div class="slideshow-dots">
+                <span class="dot active" onclick="currentSlide(0)"></span>
+                <span class="dot" onclick="currentSlide(1)"></span>
+                <span class="dot" onclick="currentSlide(2)"></span>
+                <span class="dot" onclick="currentSlide(3)"></span>
+            </div>
+            
             <div class="login-form">
-                <h2>👋 Byenvini!</h2>
+                <h2>👋 Byenveni!</h2>
                 <p style="margin-bottom: 20px; color: #666;">Antre non ou pou kòmanse jwe</p>
                 <input type="text" id="playerName" placeholder="Non ou..." maxlength="20">
                 <button onclick="startGame()">🎮 Kòmanse Jwe</button>
@@ -810,7 +911,7 @@
         let startTime = null;
         let timerInterval = null;
         let leaderboard = [];
-        const ADMIN_PASSWORD = 'obed0414'; // Changez ce mot de passe!
+        const ADMIN_PASSWORD = 'KreyolAdmin2025!'; // ⚠️ CHANGEZ CE MOT DE PASSE!
 
         function startGame() {
             const nameInput = document.getElementById('playerName');
@@ -1024,9 +1125,33 @@
                     cell.dataset.row = i;
                     cell.dataset.col = j;
                     
-                    cell.addEventListener('mousedown', () => startSelection(i, j));
+                    // Événements souris (ordinateur)
+                    cell.addEventListener('mousedown', (e) => {
+                        e.preventDefault();
+                        startSelection(i, j);
+                    });
                     cell.addEventListener('mouseenter', () => continueSelection(i, j));
                     cell.addEventListener('mouseup', endSelection);
+                    
+                    // Événements tactiles (mobile)
+                    cell.addEventListener('touchstart', (e) => {
+                        e.preventDefault();
+                        startSelection(i, j);
+                    });
+                    cell.addEventListener('touchmove', (e) => {
+                        e.preventDefault();
+                        const touch = e.touches[0];
+                        const element = document.elementFromPoint(touch.clientX, touch.clientY);
+                        if (element && element.classList.contains('cell')) {
+                            const row = parseInt(element.dataset.row);
+                            const col = parseInt(element.dataset.col);
+                            continueSelection(row, col);
+                        }
+                    });
+                    cell.addEventListener('touchend', (e) => {
+                        e.preventDefault();
+                        endSelection();
+                    });
                     
                     gridEl.appendChild(cell);
                 }
@@ -1326,6 +1451,36 @@
         function refreshAdminData() {
             loadAdminData();
         }
+
+        // Diaporama
+        let slideIndex = 0;
+        let slideTimer;
+
+        function showSlides() {
+            const slides = document.querySelectorAll('.slide');
+            const dots = document.querySelectorAll('.dot');
+            
+            slides.forEach(slide => slide.classList.remove('active'));
+            dots.forEach(dot => dot.classList.remove('active'));
+            
+            slideIndex++;
+            if (slideIndex >= slides.length) {
+                slideIndex = 0;
+            }
+            
+            slides[slideIndex].classList.add('active');
+            dots[slideIndex].classList.add('active');
+        }
+
+        function currentSlide(n) {
+            slideIndex = n - 1;
+            showSlides();
+            clearInterval(slideTimer);
+            slideTimer = setInterval(showSlides, 4000);
+        }
+
+        // Démarrer le diaporama automatique
+        slideTimer = setInterval(showSlides, 4000);
     </script>
 </body>
 </html>
