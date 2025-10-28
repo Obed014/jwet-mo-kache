@@ -1,0 +1,1331 @@
+                <!DOCTYPE html>
+<html lang="ht">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jwèt Mo Kache Kreyòl Ayisyen</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        h1 {
+            text-align: center;
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+
+        /* Écran de connexion */
+        .login-screen {
+            max-width: 500px;
+            margin: 50px auto;
+            text-align: center;
+        }
+
+        .login-screen h2 {
+            color: #667eea;
+            margin-bottom: 30px;
+            font-size: 2em;
+        }
+
+        .login-form {
+            background: #f8f9fa;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .login-form input {
+            width: 100%;
+            padding: 15px;
+            font-size: 18px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            transition: border 0.3s;
+        }
+
+        .login-form input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .login-form button {
+            width: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px;
+            font-size: 18px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: bold;
+        }
+
+        .login-form button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+
+        /* Instructions */
+        .instructions {
+            background: #fff3cd;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border-left: 5px solid #ffc107;
+        }
+
+        .instructions h3 {
+            color: #856404;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+
+        .instructions ul {
+            color: #856404;
+            line-height: 1.8;
+            padding-left: 25px;
+        }
+
+        .instructions strong {
+            font-weight: 600;
+        }
+
+        /* Zone de jeu */
+        .game-area {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 30px;
+            margin-top: 20px;
+        }
+
+        .grid-container {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: inset 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .grid {
+            display: inline-grid;
+            gap: 3px;
+            background: #667eea;
+            padding: 10px;
+            border-radius: 10px;
+        }
+
+        .cell {
+            width: 35px;
+            height: 35px;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+            user-select: none;
+            border-radius: 5px;
+            transition: all 0.2s;
+            border: 2px solid transparent;
+        }
+
+        .cell:hover {
+            transform: scale(1.1);
+            background: #e3f2fd;
+            border-color: #667eea;
+        }
+
+        .cell.selected {
+            background: #ffd54f;
+            border-color: #ffa000;
+            transform: scale(1.05);
+        }
+
+        .cell.found {
+            background: #4caf50;
+            color: white;
+            pointer-events: none;
+        }
+
+        /* Panneau latéral */
+        .side-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            min-width: 320px;
+        }
+
+        .player-info {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+        }
+
+        .player-info h3 {
+            font-size: 1.3em;
+            margin-bottom: 10px;
+        }
+
+        .player-info .player-name {
+            font-size: 1.5em;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .words-panel {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 15px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .words-panel h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+            text-align: center;
+        }
+
+        .word-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .word-item {
+            padding: 12px 15px;
+            background: white;
+            border-radius: 8px;
+            transition: all 0.3s;
+            border-left: 4px solid #667eea;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .word-item.found {
+            background: #4caf50;
+            color: white;
+            border-left-color: #2e7d32;
+            text-decoration: line-through;
+        }
+
+        .stats {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 15px;
+        }
+
+        .stats h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+            background: white;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+
+        .stat-label {
+            font-weight: bold;
+            color: #666;
+        }
+
+        .stat-value {
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        .leaderboard {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 15px;
+            margin-top: 20px;
+        }
+
+        .leaderboard h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .leaderboard-list {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .leaderboard-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            background: white;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .leaderboard-item.winner {
+            background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+            border: 2px solid #f9a825;
+        }
+
+        .leaderboard-rank {
+            font-weight: bold;
+            color: #667eea;
+            font-size: 1.2em;
+            min-width: 30px;
+        }
+
+        .leaderboard-name {
+            flex: 1;
+            font-weight: 600;
+        }
+
+        .leaderboard-score {
+            color: #4caf50;
+            font-weight: bold;
+        }
+
+        .leaderboard-time {
+            color: #666;
+            font-size: 0.9em;
+            margin-left: 10px;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        button {
+            flex: 1;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            font-size: 16px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            font-weight: bold;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+
+        button.secondary {
+            background: linear-gradient(135deg, #f44336 0%, #e91e63 100%);
+        }
+
+        .victory-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .victory-content {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            max-width: 500px;
+            animation: popIn 0.5s ease;
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0.5); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .victory-content h2 {
+            color: #4caf50;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+        }
+
+        .victory-content .trophy {
+            font-size: 5em;
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 1200px) {
+            .game-area {
+                grid-template-columns: 1fr;
+            }
+            
+            .side-panel {
+                min-width: auto;
+            }
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        /* Panneau d'administration */
+        .admin-button {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            transition: all 0.3s;
+            z-index: 100;
+        }
+
+        .admin-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+        }
+
+        .admin-panel {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            z-index: 1001;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        .admin-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+        }
+
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid #667eea;
+        }
+
+        .admin-header h2 {
+            color: #667eea;
+            font-size: 2em;
+        }
+
+        .admin-close {
+            background: #f44336;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .admin-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .admin-stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+        }
+
+        .admin-stat-card h3 {
+            font-size: 1em;
+            margin-bottom: 10px;
+            opacity: 0.9;
+        }
+
+        .admin-stat-card .stat-number {
+            font-size: 2.5em;
+            font-weight: bold;
+        }
+
+        .admin-section {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+        }
+
+        .admin-section h3 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+
+        .admin-table {
+            width: 100%;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .admin-table table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .admin-table th {
+            background: #667eea;
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        .admin-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .admin-table tr:hover {
+            background: #f5f5f5;
+        }
+
+        .admin-action-btn {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-right: 5px;
+            transition: all 0.2s;
+        }
+
+        .admin-action-btn.delete {
+            background: #f44336;
+            color: white;
+        }
+
+        .admin-action-btn.delete:hover {
+            background: #d32f2f;
+        }
+
+        .admin-action-btn.export {
+            background: #4caf50;
+            color: white;
+        }
+
+        .admin-action-btn.export:hover {
+            background: #388e3c;
+        }
+
+        .admin-action-btn.reset {
+            background: #ff9800;
+            color: white;
+        }
+
+        .admin-action-btn.reset:hover {
+            background: #f57c00;
+        }
+
+        .admin-login {
+            max-width: 400px;
+            margin: 100px auto;
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            text-align: center;
+        }
+
+        .admin-login h2 {
+            color: #667eea;
+            margin-bottom: 30px;
+        }
+
+        .admin-login input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+
+        .admin-login input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .admin-login button {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Écran de connexion -->
+        <div id="loginScreen" class="login-screen">
+            <h1>🔍 Jwèt Mo Kache</h1>
+            <p class="subtitle">Kreyòl Ayisyen</p>
+            <div class="login-form">
+                <h2>👋 Byenveni!</h2>
+                <p style="margin-bottom: 20px; color: #666;">Antre non ou pou kòmanse jwe</p>
+                <input type="text" id="playerName" placeholder="Non ou..." maxlength="20">
+                <button onclick="startGame()">🎮 Kòmanse Jwe</button>
+            </div>
+        </div>
+
+        <!-- Écran de jeu -->
+        <div id="gameScreen" class="hidden">
+            <h1>🔍 Jwèt Mo Kache</h1>
+            <p class="subtitle">Chache mo yo nan tout direksyon!</p>
+            
+            <div class="instructions">
+                <h3>📋 Konsiy yo:</h3>
+                <ul>
+                    <li><strong>Klike</strong> sou premye lèt yon mo</li>
+                    <li><strong>Trennen sourit la</strong> sou lèt yo jiskaske ou fini mo a</li>
+                    <li><strong>Lage sourit la</strong> - si mo a kòrèk, li ap vin vèt!</li>
+                    <li>Mo yo ka nan <strong>tout 8 direksyon</strong>: dwat ➡️, gòch ⬅️, anlè ⬆️, anba ⬇️, ak tout dyagonal yo ↗️↘️↙️↖️</li>
+                    <li>Gade lis mo yo sou bò dwat la pou konnen ki mo ou dwe chache</li>
+                </ul>
+            </div>
+            
+            <div class="game-area">
+                <div class="grid-container">
+                    <div id="grid" class="grid"></div>
+                </div>
+                
+                <div class="side-panel">
+                    <div class="player-info">
+                        <h3>🎮 Jwè</h3>
+                        <div class="player-name" id="currentPlayer"></div>
+                        <div id="timer" style="font-size: 1.2em; margin-top: 10px;">⏱️ 00:00</div>
+                    </div>
+
+                    <div class="stats">
+                        <h3>📊 Estatistik</h3>
+                        <div class="stat-item">
+                            <span class="stat-label">Mo jwenn:</span>
+                            <span class="stat-value" id="wordsFound">0/49</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Pousantaj:</span>
+                            <span class="stat-value" id="percentage">0%</span>
+                        </div>
+                    </div>
+                    
+                    <div class="words-panel">
+                        <h2>📝 Mo pou Chache</h2>
+                        <div id="wordList" class="word-list"></div>
+                    </div>
+                    
+                    <div class="controls">
+                        <button onclick="resetGame()">🔄 Rekòmanse</button>
+                        <button class="secondary" onclick="logout()">🚪 Sòti</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="leaderboard">
+                <h3>🏆 Tablo Klasseman</h3>
+                <div id="leaderboardList" class="leaderboard-list"></div>
+            </div>
+        </div>
+
+        <!-- Modal de victoire -->
+        <div id="victoryModal" class="victory-modal">
+            <div class="victory-content">
+                <div class="trophy">🏆</div>
+                <h2>Félisitasyon!</h2>
+                <p style="font-size: 1.3em; margin: 20px 0;">
+                    <strong id="victoryName"></strong>, ou jwenn tout mo yo!
+                </p>
+                <p style="font-size: 1.5em; color: #667eea; font-weight: bold;" id="victoryTime"></p>
+                <button onclick="closeVictory()" style="margin-top: 20px; width: 100%;">Kontinye</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bouton Admin -->
+    <button class="admin-button" onclick="openAdminLogin()" title="Administration">⚙️</button>
+
+    <!-- Panneau d'Administration -->
+    <div id="adminPanel" class="admin-panel">
+        <!-- Login Admin -->
+        <div id="adminLogin" class="admin-login">
+            <h2>🔐 Administrasyon</h2>
+            <p style="color: #666; margin-bottom: 20px;">Antre modpas ou</p>
+            <input type="password" id="adminPassword" placeholder="Modpas...">
+            <button onclick="checkAdminPassword()">Konekte</button>
+            <button onclick="closeAdmin()" style="background: #f44336; margin-top: 10px;">Fèmen</button>
+        </div>
+
+        <!-- Contenu Admin -->
+        <div id="adminContent" class="admin-content hidden">
+            <div class="admin-header">
+                <h2>⚙️ Panèl Administrasyon</h2>
+                <button class="admin-close" onclick="closeAdmin()">✕ Fèmen</button>
+            </div>
+
+            <!-- Statistiques générales -->
+            <div class="admin-stats-grid">
+                <div class="admin-stat-card">
+                    <h3>Total Jwè</h3>
+                    <div class="stat-number" id="adminTotalPlayers">0</div>
+                </div>
+                <div class="admin-stat-card">
+                    <h3>Total Pati</h3>
+                    <div class="stat-number" id="adminTotalGames">0</div>
+                </div>
+                <div class="admin-stat-card">
+                    <h3>Pati Konple</h3>
+                    <div class="stat-number" id="adminCompletedGames">0</div>
+                </div>
+                <div class="admin-stat-card">
+                    <h3>Mwayen Tan</h3>
+                    <div class="stat-number" id="adminAvgTime">0:00</div>
+                </div>
+            </div>
+
+            <!-- Actions rapides -->
+            <div class="admin-section">
+                <h3>⚡ Aksyon Rapid</h3>
+                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                    <button class="admin-action-btn export" onclick="exportData()">📥 Ekspòte Done</button>
+                    <button class="admin-action-btn reset" onclick="resetLeaderboard()">🔄 Efase Tablo</button>
+                    <button class="admin-action-btn export" onclick="refreshAdminData()">🔃 Rafrechi</button>
+                </div>
+            </div>
+
+            <!-- Tableau des scores -->
+            <div class="admin-section">
+                <h3>🏆 Tout Rezilta</h3>
+                <div class="admin-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Non Jwè</th>
+                                <th>Skò</th>
+                                <th>Tan</th>
+                                <th>Dat</th>
+                                <th>Aksyon</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminScoresTable">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const words = [
+            'PÈLEBREN', 'MATYÒPWÈL', 'MAKÒKLEN', 'ESKANMÒTÈ', 'GALIPÒT',
+            'ZOUPPENDOUP', 'KAMOKEN', 'ZENGLENDO', 'SOUFNANTCHOU', 'KAMÈLEJÀN',
+            'MARANDEN', 'MAKONNEN', 'BOUTOFEN', 'MAJÒDJYÒL', 'KÒLÒKÒSÒ',
+            'AWOUSA', 'MALFRENDENG', 'MARIJANN', 'ALFALAM', 'GIYON',
+            'ZEKOURÈL', 'PICHON', 'BOULDIMAS', 'ZÒBÒY', 'DENYELÈ',
+            'MAKOKLEN', 'BAKOULOU', 'KALAZAZA', 'DEPWÈL', 'BÒZÒ',
+            'WÒKLÒ', 'ZÈKLÈ', 'ZOZO', 'KABICHA', 'MAZENFLEN',
+            'ZIZIRIT', 'MALPOUGRA', 'ALAVLAP', 'AZIZWÈL', 'DYABASKI',
+            'GWOGONM', 'VALPA', 'ABOLOTCHO', 'SOUFRISKEN', 'KANNARI',
+            'BATWÈL', 'LEPLI', 'SÈPÈT', 'KALANDERIK'
+        ];
+
+        const gridSize = 25;
+        let grid = [];
+        let selectedCells = [];
+        let foundWords = new Set();
+        let wordPositions = {};
+        let currentPlayerName = '';
+        let startTime = null;
+        let timerInterval = null;
+        let leaderboard = [];
+        const ADMIN_PASSWORD = 'admin2025'; // Changez ce mot de passe!
+
+        function startGame() {
+            const nameInput = document.getElementById('playerName');
+            const name = nameInput.value.trim();
+            
+            if (name === '') {
+                alert('Tanpri antre non ou!');
+                return;
+            }
+            
+            currentPlayerName = name;
+            document.getElementById('currentPlayer').textContent = name;
+            document.getElementById('loginScreen').classList.add('hidden');
+            document.getElementById('gameScreen').classList.remove('hidden');
+            
+            loadLeaderboard();
+            initGrid();
+            renderGrid();
+            renderWordList();
+            startTimer();
+        }
+
+        function startTimer() {
+            startTime = Date.now();
+            timerInterval = setInterval(updateTimer, 1000);
+        }
+
+        function updateTimer() {
+            const elapsed = Math.floor((Date.now() - startTime) / 1000);
+            const minutes = Math.floor(elapsed / 60);
+            const seconds = elapsed % 60;
+            document.getElementById('timer').textContent = 
+                `⏱️ ${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+        }
+
+        function stopTimer() {
+            if (timerInterval) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+            }
+        }
+
+        function getElapsedTime() {
+            if (!startTime) return 0;
+            return Math.floor((Date.now() - startTime) / 1000);
+        }
+
+        function formatTime(seconds) {
+            const minutes = Math.floor(seconds / 60);
+            const secs = seconds % 60;
+            return `${minutes}:${String(secs).padStart(2, '0')}`;
+        }
+
+        async function loadLeaderboard() {
+            try {
+                const result = await window.storage.list('wordsearch:', true);
+                if (result && result.keys) {
+                    leaderboard = [];
+                    for (const key of result.keys) {
+                        try {
+                            const data = await window.storage.get(key, true);
+                            if (data && data.value) {
+                                leaderboard.push(JSON.parse(data.value));
+                            }
+                        } catch (e) {
+                            console.log('Clé non trouvée:', key);
+                        }
+                    }
+                    leaderboard.sort((a, b) => {
+                        if (b.score !== a.score) return b.score - a.score;
+                        return a.time - b.time;
+                    });
+                    renderLeaderboard();
+                }
+            } catch (error) {
+                console.log('Chargement du leaderboard:', error);
+                leaderboard = [];
+                renderLeaderboard();
+            }
+        }
+
+        function renderLeaderboard() {
+            const listEl = document.getElementById('leaderboardList');
+            
+            if (leaderboard.length === 0) {
+                listEl.innerHTML = '<p style="text-align: center; color: #999; padding: 20px;">Pa gen ankenn rezilta ankò</p>';
+                return;
+            }
+            
+            listEl.innerHTML = '';
+            leaderboard.slice(0, 10).forEach((entry, index) => {
+                const item = document.createElement('div');
+                item.className = 'leaderboard-item';
+                if (index === 0) item.classList.add('winner');
+                
+                const rank = index + 1;
+                const medal = rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : '';
+                
+                item.innerHTML = `
+                    <span class="leaderboard-rank">${medal || rank + '.'}</span>
+                    <span class="leaderboard-name">${entry.name}</span>
+                    <span class="leaderboard-score">${entry.score}/49</span>
+                    <span class="leaderboard-time">${formatTime(entry.time)}</span>
+                `;
+                listEl.appendChild(item);
+            });
+        }
+
+        async function saveScore() {
+            const score = foundWords.size;
+            const time = getElapsedTime();
+            const timestamp = Date.now();
+            
+            const entry = {
+                name: currentPlayerName,
+                score: score,
+                time: time,
+                timestamp: timestamp
+            };
+            
+            try {
+                await window.storage.set(
+                    `wordsearch:${timestamp}-${currentPlayerName}`, 
+                    JSON.stringify(entry),
+                    true
+                );
+                await loadLeaderboard();
+            } catch (error) {
+                console.error('Erreur sauvegarde:', error);
+            }
+        }
+
+        function initGrid() {
+            grid = Array(gridSize).fill().map(() => Array(gridSize).fill(''));
+            wordPositions = {};
+            
+            const directions = [
+                [0, 1], [1, 0], [1, 1], [0, -1],
+                [-1, 0], [-1, -1], [1, -1], [-1, 1]
+            ];
+
+            words.forEach(word => {
+                let placed = false;
+                let attempts = 0;
+                
+                while (!placed && attempts < 100) {
+                    const dir = directions[Math.floor(Math.random() * directions.length)];
+                    const row = Math.floor(Math.random() * gridSize);
+                    const col = Math.floor(Math.random() * gridSize);
+                    
+                    if (canPlaceWord(word, row, col, dir)) {
+                        placeWord(word, row, col, dir);
+                        placed = true;
+                    }
+                    attempts++;
+                }
+            });
+
+            const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZÀÈÒÙÉÊÎÔÛÄËÏÖÜÃÕÑÇÆŒ';
+            for (let i = 0; i < gridSize; i++) {
+                for (let j = 0; j < gridSize; j++) {
+                    if (grid[i][j] === '') {
+                        grid[i][j] = letters[Math.floor(Math.random() * letters.length)];
+                    }
+                }
+            }
+        }
+
+        function canPlaceWord(word, row, col, dir) {
+            const [dr, dc] = dir;
+            
+            for (let i = 0; i < word.length; i++) {
+                const r = row + dr * i;
+                const c = col + dc * i;
+                
+                if (r < 0 || r >= gridSize || c < 0 || c >= gridSize) {
+                    return false;
+                }
+                
+                if (grid[r][c] !== '' && grid[r][c] !== word[i]) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        function placeWord(word, row, col, dir) {
+            const [dr, dc] = dir;
+            const positions = [];
+            
+            for (let i = 0; i < word.length; i++) {
+                const r = row + dr * i;
+                const c = col + dc * i;
+                grid[r][c] = word[i];
+                positions.push([r, c]);
+            }
+            
+            wordPositions[word] = positions;
+        }
+
+        function renderGrid() {
+            const gridEl = document.getElementById('grid');
+            gridEl.innerHTML = '';
+            gridEl.style.gridTemplateColumns = `repeat(${gridSize}, 35px)`;
+            
+            for (let i = 0; i < gridSize; i++) {
+                for (let j = 0; j < gridSize; j++) {
+                    const cell = document.createElement('div');
+                    cell.className = 'cell';
+                    cell.textContent = grid[i][j];
+                    cell.dataset.row = i;
+                    cell.dataset.col = j;
+                    
+                    cell.addEventListener('mousedown', () => startSelection(i, j));
+                    cell.addEventListener('mouseenter', () => continueSelection(i, j));
+                    cell.addEventListener('mouseup', endSelection);
+                    
+                    gridEl.appendChild(cell);
+                }
+            }
+        }
+
+        function renderWordList() {
+            const listEl = document.getElementById('wordList');
+            listEl.innerHTML = '';
+            
+            words.forEach(word => {
+                const item = document.createElement('div');
+                item.className = 'word-item';
+                if (foundWords.has(word)) {
+                    item.classList.add('found');
+                }
+                item.textContent = word;
+                listEl.appendChild(item);
+            });
+            
+            updateStats();
+        }
+
+        function updateStats() {
+            const found = foundWords.size;
+            const total = words.length;
+            const percentage = Math.round((found / total) * 100);
+            
+            document.getElementById('wordsFound').textContent = `${found}/${total}`;
+            document.getElementById('percentage').textContent = `${percentage}%`;
+            
+            if (found === total) {
+                stopTimer();
+                showVictory();
+            }
+        }
+
+        function showVictory() {
+            const time = getElapsedTime();
+            document.getElementById('victoryName').textContent = currentPlayerName;
+            document.getElementById('victoryTime').textContent = `Tan: ${formatTime(time)}`;
+            document.getElementById('victoryModal').style.display = 'flex';
+            saveScore();
+        }
+
+        function closeVictory() {
+            document.getElementById('victoryModal').style.display = 'none';
+        }
+
+        function startSelection(row, col) {
+            selectedCells = [[row, col]];
+            updateSelection();
+        }
+
+        function continueSelection(row, col) {
+            if (selectedCells.length > 0) {
+                const last = selectedCells[selectedCells.length - 1];
+                if (last[0] !== row || last[1] !== col) {
+                    selectedCells.push([row, col]);
+                    updateSelection();
+                }
+            }
+        }
+
+        function endSelection() {
+            if (selectedCells.length > 0) {
+                checkWord();
+                selectedCells = [];
+                updateSelection();
+            }
+        }
+
+        function updateSelection() {
+            document.querySelectorAll('.cell').forEach(cell => {
+                cell.classList.remove('selected');
+            });
+            
+            selectedCells.forEach(([row, col]) => {
+                const cell = document.querySelector(`[data-row="${row}"][data-col="${col}"]`);
+                if (cell && !cell.classList.contains('found')) {
+                    cell.classList.add('selected');
+                }
+            });
+        }
+
+        function checkWord() {
+            const selectedWord = selectedCells.map(([r, c]) => grid[r][c]).join('');
+            
+            words.forEach(word => {
+                if (selectedWord === word || selectedWord === word.split('').reverse().join('')) {
+                    if (!foundWords.has(word)) {
+                        foundWords.add(word);
+                        markWordFound(word);
+                        renderWordList();
+                    }
+                }
+            });
+        }
+
+        function markWordFound(word) {
+            const positions = wordPositions[word];
+            if (positions) {
+                positions.forEach(([row, col]) => {
+                    const cell = document.querySelector(`[data-row="${row}"][data-col="${col}"]`);
+                    if (cell) {
+                        cell.classList.add('found');
+                    }
+                });
+            }
+        }
+
+        function resetGame() {
+            foundWords.clear();
+            selectedCells = [];
+            stopTimer();
+            initGrid();
+            renderGrid();
+            renderWordList();
+            startTimer();
+        }
+
+        function logout() {
+            stopTimer();
+            document.getElementById('gameScreen').classList.add('hidden');
+            document.getElementById('loginScreen').classList.remove('hidden');
+            document.getElementById('playerName').value = '';
+            foundWords.clear();
+            selectedCells = [];
+        }
+
+        document.addEventListener('mouseup', endSelection);
+
+        // Gestion Enter sur input
+        document.getElementById('playerName').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                startGame();
+            }
+        });
+
+        document.getElementById('adminPassword').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                checkAdminPassword();
+            }
+        });
+
+        // Fonctions d'administration
+        function openAdminLogin() {
+            document.getElementById('adminPanel').style.display = 'block';
+            document.getElementById('adminLogin').classList.remove('hidden');
+            document.getElementById('adminContent').classList.add('hidden');
+        }
+
+        function closeAdmin() {
+            document.getElementById('adminPanel').style.display = 'none';
+            document.getElementById('adminPassword').value = '';
+        }
+
+        function checkAdminPassword() {
+            const password = document.getElementById('adminPassword').value;
+            if (password === ADMIN_PASSWORD) {
+                document.getElementById('adminLogin').classList.add('hidden');
+                document.getElementById('adminContent').classList.remove('hidden');
+                loadAdminData();
+            } else {
+                alert('Modpas pa bon!');
+                document.getElementById('adminPassword').value = '';
+            }
+        }
+
+        async function loadAdminData() {
+            try {
+                const result = await window.storage.list('wordsearch:', true);
+                if (result && result.keys) {
+                    leaderboard = [];
+                    for (const key of result.keys) {
+                        try {
+                            const data = await window.storage.get(key, true);
+                            if (data && data.value) {
+                                const entry = JSON.parse(data.value);
+                                entry.key = key;
+                                leaderboard.push(entry);
+                            }
+                        } catch (e) {
+                            console.log('Clé non trouvée:', key);
+                        }
+                    }
+                    leaderboard.sort((a, b) => b.timestamp - a.timestamp);
+                    updateAdminStats();
+                    renderAdminScores();
+                }
+            } catch (error) {
+                console.log('Erreur chargement admin:', error);
+            }
+        }
+
+        function updateAdminStats() {
+            const uniquePlayers = new Set(leaderboard.map(e => e.name)).size;
+            const totalGames = leaderboard.length;
+            const completedGames = leaderboard.filter(e => e.score === 49).length;
+            const avgTime = leaderboard.length > 0 
+                ? Math.round(leaderboard.reduce((sum, e) => sum + e.time, 0) / leaderboard.length)
+                : 0;
+
+            document.getElementById('adminTotalPlayers').textContent = uniquePlayers;
+            document.getElementById('adminTotalGames').textContent = totalGames;
+            document.getElementById('adminCompletedGames').textContent = completedGames;
+            document.getElementById('adminAvgTime').textContent = formatTime(avgTime);
+        }
+
+        function renderAdminScores() {
+            const tbody = document.getElementById('adminScoresTable');
+            tbody.innerHTML = '';
+
+            leaderboard.forEach((entry, index) => {
+                const row = document.createElement('tr');
+                const date = new Date(entry.timestamp);
+                const dateStr = date.toLocaleDateString('fr-FR') + ' ' + date.toLocaleTimeString('fr-FR');
+                
+                row.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td><strong>${entry.name}</strong></td>
+                    <td>${entry.score}/49</td>
+                    <td>${formatTime(entry.time)}</td>
+                    <td>${dateStr}</td>
+                    <td>
+                        <button class="admin-action-btn delete" onclick="deleteScore('${entry.key}')">
+                            🗑️ Efase
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        async function deleteScore(key) {
+            if (confirm('Ou sèten ou vle efase rezilta sa a?')) {
+                try {
+                    await window.storage.delete(key, true);
+                    await loadAdminData();
+                    await loadLeaderboard();
+                    alert('Rezilta efase!');
+                } catch (error) {
+                    console.error('Erreur suppression:', error);
+                    alert('Erè! Pa kapab efase rezilta a.');
+                }
+            }
+        }
+
+        async function resetLeaderboard() {
+            if (confirm('ATANSYON! Ou sèten ou vle efase TOUT rezilta yo? Aksyon sa a pa ka defèt!')) {
+                if (confirm('Dènye konfirmasyon: Efase tout done yo?')) {
+                    try {
+                        const result = await window.storage.list('wordsearch:', true);
+                        if (result && result.keys) {
+                            for (const key of result.keys) {
+                                try {
+                                    await window.storage.delete(key, true);
+                                } catch (e) {
+                                    console.log('Erreur suppression:', key);
+                                }
+                            }
+                        }
+                        leaderboard = [];
+                        await loadAdminData();
+                        await loadLeaderboard();
+                        alert('Tout rezilta yo efase!');
+                    } catch (error) {
+                        console.error('Erreur reset:', error);
+                        alert('Erè pandan efasman!');
+                    }
+                }
+            }
+        }
+
+        function exportData() {
+            const data = leaderboard.map(entry => ({
+                Nom: entry.name,
+                Score: entry.score,
+                Temps: formatTime(entry.time),
+                Date: new Date(entry.timestamp).toLocaleString('fr-FR')
+            }));
+
+            const csv = [
+                ['Nom', 'Score', 'Temps', 'Date'],
+                ...data.map(row => [row.Nom, row.Score, row.Temps, row.Date])
+            ].map(row => row.join(',')).join('\n');
+
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `jwet-mo-kache-${Date.now()}.csv`;
+            a.click();
+            window.URL.revokeObjectURL(url);
+        }
+
+        function refreshAdminData() {
+            loadAdminData();
+        }
+    </script>
+</body>
+</html>
