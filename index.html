@@ -230,6 +230,9 @@
             border-radius: 5px;
             transition: all 0.2s;
             border: 2px solid transparent;
+            touch-action: none;
+            -webkit-user-select: none;
+            -webkit-touch-callout: none;
         }
 
         .cell:hover {
@@ -477,6 +480,36 @@
             .side-panel {
                 min-width: auto;
             }
+
+            .grid-container {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            .grid {
+                margin: 0 auto;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+
+            .cell {
+                width: 30px;
+                height: 30px;
+                font-size: 14px;
+            }
+
+            .instructions ul {
+                font-size: 0.9em;
+                padding-left: 20px;
+            }
         }
 
         .hidden {
@@ -714,6 +747,9 @@
 
             <!-- Diaporama -->
             <div class="slideshow-container">
+                <div class="slide active">
+                    <img src="https://images.unsplash.com/photo-1548013146-72479768bada?q=80&w=1000" alt="Vue de Port-au-Prince">
+                </div>
                 <div class="slide">
                     <img src="https://plus.unsplash.com/premium_photo-1732834277034-9e2eb5dd4d60?q=80&w=1000" alt="Culture Haïtienne">
                 </div>
@@ -732,7 +768,7 @@
             </div>
             
             <div class="login-form">
-                <h2>👋 Byenvini!</h2>
+                <h2>👋 Byenveni!</h2>
                 <p style="margin-bottom: 20px; color: #666;">Antre non ou pou kòmanse jwe</p>
                 <input type="text" id="playerName" placeholder="Non ou..." maxlength="20">
                 <button onclick="startGame()">🎮 Kòmanse Jwe</button>
@@ -873,6 +909,7 @@
                                 <th>Non Jwè</th>
                                 <th>Skò</th>
                                 <th>Tan</th>
+                                <th>Estati</th>
                                 <th>Dat</th>
                                 <th>Aksyon</th>
                             </tr>
@@ -908,7 +945,7 @@
         let startTime = null;
         let timerInterval = null;
         let leaderboard = [];
-        const ADMIN_PASSWORD = 'obed0414'; // ⚠️ CHANGEZ CE MOT DE PASSE!
+        const ADMIN_PASSWORD = 'KreyolAdmin2025!'; // ⚠️ CHANGEZ CE MOT DE PASSE!
 
         function startGame() {
             const nameInput = document.getElementById('playerName');
@@ -1002,15 +1039,16 @@
             leaderboard.slice(0, 10).forEach((entry, index) => {
                 const item = document.createElement('div');
                 item.className = 'leaderboard-item';
-                if (index === 0) item.classList.add('winner');
+                if (index === 0 && entry.completed) item.classList.add('winner');
                 
                 const rank = index + 1;
-                const medal = rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : '';
+                const medal = rank === 1 && entry.completed ? '🥇' : rank === 2 && entry.completed ? '🥈' : rank === 3 && entry.completed ? '🥉' : '';
+                const statusIcon = entry.completed ? '✅' : '⏸️';
                 
                 item.innerHTML = `
                     <span class="leaderboard-rank">${medal || rank + '.'}</span>
-                    <span class="leaderboard-name">${entry.name}</span>
-                    <span class="leaderboard-score">${entry.score}/49</span>
+                    <span class="leaderboard-name">${entry.name} ${statusIcon}</span>
+                    <span class="leaderboard-score">${entry.score}/${words.length}</span>
                     <span class="leaderboard-time">${formatTime(entry.time)}</span>
                 `;
                 listEl.appendChild(item);
@@ -1026,7 +1064,8 @@
                 name: currentPlayerName,
                 score: score,
                 time: time,
-                timestamp: timestamp
+                timestamp: timestamp,
+                completed: score === words.length
             };
             
             try {
@@ -1040,6 +1079,23 @@
                 console.error('Erreur sauvegarde:', error);
             }
         }
+
+        // Sauvegarder automatiquement tous les progrès
+        async function autoSave() {
+            if (currentPlayerName && foundWords.size > 0) {
+                await saveScore();
+            }
+        }
+
+        // Sauvegarder quand l'utilisateur quitte
+        window.addEventListener('beforeunload', autoSave);
+        
+        // Sauvegarder périodiquement (toutes les 30 secondes)
+        setInterval(() => {
+            if (currentPlayerName && foundWords.size > 0 && timerInterval) {
+                autoSave();
+            }
+        }, 30000);
 
         function initGrid() {
             grid = Array(gridSize).fill().map(() => Array(gridSize).fill(''));
@@ -1180,6 +1236,11 @@
             document.getElementById('wordsFound').textContent = `${found}/${total}`;
             document.getElementById('percentage').textContent = `${percentage}%`;
             
+            // Sauvegarder automatiquement à chaque mot trouvé
+            if (found > 0) {
+                autoSave();
+            }
+            
             if (found === total) {
                 stopTimer();
                 showVictory();
@@ -1280,6 +1341,7 @@
         }
 
         document.addEventListener('mouseup', endSelection);
+        document.addEventListener('touchend', endSelection);
 
         // Gestion Enter sur input
         document.getElementById('playerName').addEventListener('keypress', (e) => {
@@ -1347,7 +1409,7 @@
         function updateAdminStats() {
             const uniquePlayers = new Set(leaderboard.map(e => e.name)).size;
             const totalGames = leaderboard.length;
-            const completedGames = leaderboard.filter(e => e.score === 49).length;
+            const completedGames = leaderboard.filter(e => e.completed).length;
             const avgTime = leaderboard.length > 0 
                 ? Math.round(leaderboard.reduce((sum, e) => sum + e.time, 0) / leaderboard.length)
                 : 0;
@@ -1366,12 +1428,15 @@
                 const row = document.createElement('tr');
                 const date = new Date(entry.timestamp);
                 const dateStr = date.toLocaleDateString('fr-FR') + ' ' + date.toLocaleTimeString('fr-FR');
+                const statusIcon = entry.completed ? '✅ Konple' : '⏸️ Abandone';
+                const statusColor = entry.completed ? '#4caf50' : '#ff9800';
                 
                 row.innerHTML = `
                     <td>${index + 1}</td>
                     <td><strong>${entry.name}</strong></td>
-                    <td>${entry.score}/49</td>
+                    <td>${entry.score}/${words.length}</td>
                     <td>${formatTime(entry.time)}</td>
+                    <td><span style="color: ${statusColor}; font-weight: bold;">${statusIcon}</span></td>
                     <td>${dateStr}</td>
                     <td>
                         <button class="admin-action-btn delete" onclick="deleteScore('${entry.key}')">
